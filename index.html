@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="ary-Latn">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0e1522">
+  <meta name="description" content="Escape game dyal kickoff dyal club: 7el telephone dyal président w l9a fin mkhebbi.">
+  <title>Telephone Msdoud</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='8' y='2' width='16' height='28' rx='4' fill='%23151f31' stroke='%23e8c468' stroke-width='2'/%3E%3Crect x='13' y='16' width='6' height='5' rx='1' fill='%23e8c468'/%3E%3Cpath d='M14 16v-2a2 2 0 014 0v2' fill='none' stroke='%23e8c468' stroke-width='1.5'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=JetBrains+Mono:wght@500;700&family=Manrope:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="wrap">
+    <section class="vitals" aria-label="L7ala dyal lo3ba">
+      <div class="tag"><span>Dalil 017</span><span>Telephone dyal R. Benali</span></div>
+      <div class="vrow">
+        <div style="min-width:0"><div class="lbl">Équipe</div><div class="team" id="vTeam">Mazal mabdatch</div></div>
+        <div><div class="lbl">Lw9t</div><div class="timer" id="vTime">00:00</div></div>
+        <div><div class="lbl">Batterie</div><div class="batt" id="vBatt">100%</div></div>
+      </div>
+      <button class="hint-btn" id="hintBtn" type="button" disabled>Khoud tlmi7 · −10%</button>
+      <div class="bbar"><i id="vBar"></i></div>
+    </section>
+
+    <div class="phone">
+      <div class="screen on-wall" id="screen">
+        <svg class="pitch" viewBox="0 0 400 300" preserveAspectRatio="none" aria-hidden="true">
+          <g fill="none" stroke="var(--pitch-line)" stroke-width="1.5">
+            <path d="M120 20 L280 20 L400 300 L0 300 Z"/>
+            <path d="M60 160 L340 160"/>
+            <ellipse cx="200" cy="160" rx="70" ry="22"/>
+            <path d="M160 20 L165 52 L235 52 L240 20"/>
+          </g>
+        </svg>
+        <div class="sb" id="sb"><span id="sbTime">18:04</span><span class="cam"></span><span class="sb-r"><span class="sb-pct" id="sbPct">100%</span><span class="sb-b" id="sbB"><i id="sbBi" style="width:100%"></i></span></span></div>
+        <div class="view" id="view"></div>
+        <button class="hb" id="homeBar" type="button" aria-label="Rje3 l l’accueil"><i></i></button>
+      </div>
+    </div>
+
+    <section class="casefile" aria-label="Dossier">
+      <h2>Dossier</h2>
+      <div><h3>L9foul</h3><ol class="locks" id="locks"></ol></div>
+      <div><h3>Tlmi7at li khditou</h3><ul class="hintlog" id="hintLog"></ul></div>
+      <div><h3>L9awanin</h3>
+        <ul class="rules">
+          <li><b>Code wla mot de passe ghalat:</b> −5% batterie.</li>
+          <li><b>Tlmi7at:</b> ghir 2 f lo3ba kamla, kol wa7ed b −10% batterie.</li>
+          <li><b>Batterie kat9es b rasha</b> w ntouma kat l3bo.</li>
+          <li><b>F 0%</b> telephone kaytfa w l’équipe dyalkom katkhrej.</li>
+          <li><b>Score:</b> 100 3la kol 9fel + batterie li ba9ya − 2 3la kol d9i9a.</li>
+          <li>7ellou l9foul lrb3a bach tl9aw lflag <b>n7sec{…}</b>.</li>
+        </ul>
+      </div>
+      <details class="gm" id="gmPanel" hidden>
+        <summary>Game master</summary>
+        <form id="gmForm">
+          <label for="gmPlace">Lflag (kayban f lekher, b7al n7sec{…})
+            <input id="gmPlace" type="text" maxlength="120">
+          </label>
+          <label for="gmDrain">Ch7al mn d9i9a bach tsala batterie kamla b rasha
+            <input id="gmDrain" type="number" min="20" max="240" step="5">
+          </label>
+          <div class="gm-row">
+            <button class="btn-ghost" type="submit">Sejjel</button>
+            <button class="btn-ghost danger" type="button" id="gmReset">Bda telephone mn jdid l équipe jdida</button>
+          </div>
+          <p class="gm-note" id="gmMsg">Les paramètres kaytsejlo ghir f had l’appareil.</p>
+        </form>
+      </details>
+    </section>
+  </div>
+
+  <div class="overlay" id="intro" hidden>
+    <div class="card">
+      <div class="tag"><span>Dalil 017</span><span>Tl9a f salle dyal club</span></div>
+      <div class="card-body">
+        <h1>Telephone Msdoud</h1>
+        <p><strong>Rayan, président dyal club, ghber sa3a 9bel lkickoff.</strong> 7ta wa7ed mab9a y9der ywslo. Kolchi li l9ina howa telephone dyalo, mkhelli 3la tabla f salle dyal club. 7elloh, 9elbo f les applications dyalo w l9aw fin mkhebbi.</p>
+        <div class="cost">
+          <div><b>−5%</b>3la kol code wla mot de passe ghalat</div>
+          <div><b>−10%</b>3la kol tlmi7 (ghir 2 f lo3ba kamla)</div>
+          <div><b id="drainTxt">1%/36s</b>batterie kat9es b rasha</div>
+        </div>
+        <p>F 0% telephone kaytfa w lo3ba katsala. Lflag howa code b7al <b>n7sec{…}</b> kayban f lekher. Kol 9fel b 100 point, w l’équipe li 3ndha ktar score hiya li rab7a.</p>
+        <form class="start" id="startForm">
+          <input id="teamInput" type="text" maxlength="28" placeholder="Smiya dyal l’équipe" autocomplete="off">
+          <button class="btn-main" type="submit">Bdaw lw9t</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="overlay" id="end" hidden>
+    <div class="card" id="endCard"></div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>

@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0e1522">
+  <title>Locked Phone Scoreboard</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M9 4h14v6a7 7 0 01-14 0z' fill='%23e8c468'/%3E%3Cpath d='M13 22h6v4h-6z' fill='%23e8c468'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=JetBrains+Mono:wght@500;700&family=Manrope:wght@400;500;600;700;800&display=swap">
+  <style>
+    :root{
+      --desk:#0e1522; --panel:#151f31; --panel-2:#1c2840; --line:#2a3853;
+      --ink:#e8edf5; --muted:#8f9cb4; --tag:#e8c468; --tag-ink:#2a220c; --tag-bg:#e8c46824;
+      --ok:#3fc380; --ok-bg:#3fc38024; --warn:#f2a541; --bad:#f05d5e; --bad-bg:#f05d5e24;
+      --f-display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+      --f-ui:"Manrope",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+      --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+      color-scheme:dark;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;min-height:100vh;background:var(--desk);color:var(--ink);font-family:var(--f-ui);-webkit-font-smoothing:antialiased}
+    .wrap{max-width:1000px;margin:0 auto;padding:32px 16px 48px}
+    header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:22px}
+    .tag{display:inline-block;background:var(--tag);color:var(--tag-ink);font:700 11px/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;padding:7px 10px;border-radius:4px;margin-bottom:10px}
+    h1{margin:0;font:800 clamp(30px,6vw,48px)/1 var(--f-display);letter-spacing:-.02em}
+    .meta{color:var(--muted);font-size:13px;display:flex;align-items:center;gap:8px}
+    .live{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 0 var(--ok);animation:pulse 2s infinite}
+    .live.off{background:var(--bad);animation:none}
+    @keyframes pulse{70%{box-shadow:0 0 0 8px transparent}100%{box-shadow:0 0 0 0 transparent}}
+    .rule{color:var(--muted);font-size:13px;margin:0 0 16px}
+    .rule b{color:var(--ink)}
+    .board{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+    table{width:100%;border-collapse:collapse}
+    th{font:600 10px/1 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);text-align:left;padding:14px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+    td{padding:14px 12px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums;vertical-align:middle}
+    tr:last-child td{border-bottom:0}
+    .num{text-align:right;font-family:var(--f-mono)}
+    .rank{font:800 22px/1 var(--f-display);color:var(--muted);width:48px}
+    tr.top1 .rank{color:var(--tag)}
+    .team{font-weight:800;font-size:16px;max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .score{font:700 24px/1 var(--f-mono);color:var(--tag);text-align:right}
+    .locks{display:inline-flex;gap:3px}
+    .locks i{width:12px;height:12px;border-radius:3px;background:var(--panel-2);border:1px solid var(--line)}
+    .locks i.on{background:var(--ok);border-color:var(--ok)}
+    .st{display:inline-block;font:700 11px/1 var(--f-mono);letter-spacing:.06em;padding:6px 8px;border-radius:99px;white-space:nowrap}
+    .st.playing{background:var(--tag-bg);color:var(--tag)}
+    .st.found{background:var(--ok-bg);color:var(--ok)}
+    .st.dead{background:var(--bad-bg);color:var(--bad)}
+    .empty{padding:40px 16px;text-align:center;color:var(--muted)}
+    .foot{margin-top:18px;display:flex;justify-content:flex-end}
+    .btn{padding:9px 12px;border-radius:8px;border:1px solid var(--bad);background:transparent;color:var(--bad);font:700 13px var(--f-ui);cursor:pointer}
+    .btn:hover{background:var(--bad-bg)}
+    @media (max-width:700px){
+      .hide-sm{display:none}
+      th,td{padding:12px 8px}
+      .rank{width:32px;font-size:18px}
+      .score{font-size:19px}
+      .team{max-width:130px;font-size:14px}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <div class="tag">The Locked Phone</div>
+        <h1>Scoreboard</h1>
+      </div>
+      <div class="meta"><span class="live" id="live"></span><span id="upd">Loading…</span></div>
+    </header>
+    <p class="rule"><b>Score</b> = 100 per lock opened + battery left − 2 per minute played.</p>
+    <div class="board">
+      <table>
+        <thead><tr>
+          <th>#</th><th>Team</th><th>Locks</th>
+          <th class="num hide-sm">Battery</th><th class="num hide-sm">Time</th>
+          <th class="num hide-sm">Wrong</th><th class="num hide-sm">Hints</th>
+          <th>Status</th><th class="num">Score</th>
+        </tr></thead>
+        <tbody id="rows"><tr><td colspan="9" class="empty">Loading…</td></tr></tbody>
+      </table>
+    </div>
+    <div class="foot"><button class="btn" id="reset" type="button">Clear scoreboard</button></div>
+  </div>
+<script>
+(function(){
+  function esc(s){ return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+  function pad2(n){ return (n<10?'0':'')+n; }
+  function clock(sec){ var h=Math.floor(sec/3600), m=Math.floor(sec%3600/60), s=sec%60; return (h?h+':'+pad2(m):pad2(m))+':'+pad2(s); }
+  var ST={playing:['Playing','playing'], found:['Flag found 🚩','found'], dead:['Phone died','dead']};
+  var rows=document.getElementById('rows'), upd=document.getElementById('upd'), live=document.getElementById('live');
+
+  function draw(list){
+    if(!list.length){ rows.innerHTML='<tr><td colspan="9" class="empty">No team has started yet.</td></tr>'; return; }
+    rows.innerHTML=list.map(function(r,i){
+      var locks=''; for(var k=0;k<4;k++) locks+='<i class="'+(k<r.locks?'on':'')+'"></i>';
+      var st=ST[r.status]||ST.playing;
+      return '<tr class="'+(i===0?'top1':'')+'"><td class="rank">'+(i+1)+'</td><td class="team" title="'+esc(r.team)+'">'+esc(r.team)+'</td>'+
+        '<td><span class="locks" aria-label="'+r.locks+' / 4">'+locks+'</span></td>'+
+        '<td class="num hide-sm">'+r.battery+'%</td><td class="num hide-sm">'+clock(r.seconds)+'</td>'+
+        '<td class="num hide-sm">'+r.wrong+'</td><td class="num hide-sm">'+r.hints+'</td>'+
+        '<td><span class="st '+st[1]+'">'+st[0]+'</span></td><td class="score">'+r.score+'</td></tr>';
+    }).join('');
+  }
+  function load(){
+    fetch('/api/scores',{cache:'no-store'}).then(function(r){ if(!r.ok) throw 0; return r.json(); }).then(function(list){
+      draw(list); live.classList.remove('off');
+      var d=new Date(); upd.textContent='Live · '+pad2(d.getHours())+':'+pad2(d.getMinutes())+':'+pad2(d.getSeconds());
+    }).catch(function(){ live.classList.add('off'); upd.textContent='Can’t reach the server'; });
+  }
+  document.getElementById('reset').addEventListener('click',function(){
+    var key=window.prompt('Enter the game master key to clear all scores:');
+    if(!key) return;
+    fetch('/api/scores/reset',{method:'POST',headers:{'X-Admin-Key':key}}).then(function(r){
+      if(r.status===403) alert('Wrong key.'); load();
+    }).catch(function(){ alert('Can’t reach the server.'); });
+  });
+  load(); setInterval(load,3000);
+})();
+</script>
+</body>
+</html>
